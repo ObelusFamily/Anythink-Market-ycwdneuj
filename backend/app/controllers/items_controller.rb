@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 require_relative "../../lib/event"
+require "ruby/openai"
 include Event
 
 class ItemsController < ApplicationController
@@ -53,6 +54,17 @@ class ItemsController < ApplicationController
   def create
     @item = Item.new(item_params)
     @item.user = current_user
+
+    if @item.image.blank?
+    openAIClient = OpenAI::Client.new
+    response = openAIClient.images.generate(
+      parameters: {
+        prompt: @item.title,
+        size: "256x256"
+      }
+    )
+    @item.image = response.dig("data", 0, "url")
+  end
 
     if @item.save
       sendEvent("item_created", { item: item_params })
