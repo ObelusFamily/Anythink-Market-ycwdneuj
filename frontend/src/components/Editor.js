@@ -47,6 +47,30 @@ class Editor extends React.Component {
       this.props.onRemoveTag(tag);
     };
 
+    // console.logs arent popping up in my browser so I cant see what my res is on line 68
+    // I'm also still learning redux, and useState() wasnt working in this container for some reason
+    // so...I cant console.log it and I cant set it to a stateful variable and console.log that :(
+    const noImage = () => {
+      fetch("https://api.openai.com/v1/images/generations",
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer OPENAI_API_KEY'
+          },
+          method: "POST",
+          body: JSON.stringify({
+            "prompt": `${this.props.title}`,
+            "n": 1,
+            "size": "256x256"
+          })
+        })
+        // .then((res) => { return res.data.url })
+        .then((res) => { console.log(res.data.url) })
+    }
+
+
+    // assuming I can put a ternary in place of the value of image: like so;
+    // this.props.description ? this.props.description : <response from fetch goes here?>
     this.submitForm = (ev) => {
       ev.preventDefault();
       const item = {
